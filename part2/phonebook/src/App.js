@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons'
-import { wait } from '@testing-library/user-event/dist/utils'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -25,13 +23,36 @@ const App = () => {
 
     // check if user already exists
     if (persons.findIndex(person => person.name === newName) > 0) {
-      window.confirm(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} already exists, replace the old
+            number with a new one?`)) {
+        updatePerson(newName, newNumber)
+      }
       return
     }
+    createPerson(newName, newNumber)
+  }
 
+  const updatePerson = (name, number) => {
+    const person = persons.find(person => person.name === name)
+    const changedPerson = { ...person, number: number }
+
+    personService
+      .update(changedPerson.id, changedPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
+      })
+      .catch(error => {
+        alert(
+          `failed to update person with id : ${changedPerson.id}`
+        )
+        setPersons(persons.filter(person => person.id !== changedPerson.id))
+      })
+  }
+
+  const createPerson = (name, number) => {
     const personObject = {
-      name: newName,
-      number: newNumber
+      name: name,
+      number: number
     }
 
     personService
