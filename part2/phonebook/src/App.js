@@ -3,6 +3,8 @@ import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import personService from './services/persons'
+import { wait } from '@testing-library/user-event/dist/utils'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,10 +13,10 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(response => {
-        console.log(response.data)
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -31,10 +33,29 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
+
+    personService
+      .create(personObject)
+      .then(newPerson => {
+        setPersons(persons.concat(newPerson))
+        setNewName('')
+        setNewNumber('')
+      })
   }
+
+  const deletePerson = (id) => {
+    const person = persons.find(person => person.id === id)
+
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deletePerson(id)
+        .catch(error => {
+          console.log(`failed to delete person with id ${id} : {error}`)
+        })
+      setPersons(persons.filter(person => person.id !== id))
+    }
+  }
+
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
@@ -46,8 +67,6 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
-
-
   }
 
   return (
@@ -58,7 +77,7 @@ const App = () => {
       <PersonForm addPerson={addPerson} newName={newName} handleInputChange={handleInputChange}
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} handleDelete={deletePerson} />
     </div>
   )
 }

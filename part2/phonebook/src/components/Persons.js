@@ -1,3 +1,5 @@
+import Person from './Person'
+
 const Persons = (props) => {
 
   const personsToShow = props.persons.filter(person => person.name.toLowerCase().includes(props.filter.toLowerCase()))
@@ -6,7 +8,11 @@ const Persons = (props) => {
     <div>
       <ul>
         {personsToShow.map(person =>
-          <li key={person.name}>{person.name} {person.number}</li>
+          <Person key={person.id}
+            name={person.name}
+            number={person.number}
+            handleDelete={() => props.handleDelete(person.id)}
+          />
         )}
       </ul>
     </div>
