@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import personService from './services/persons'
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [style, setStyle] = useState('error')
 
   useEffect(() => {
     personService
@@ -42,10 +45,8 @@ const App = () => {
         setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
       })
       .catch(error => {
-        alert(
-          `failed to update person with id : ${changedPerson.id}`
-        )
         setPersons(persons.filter(person => person.id !== changedPerson.id))
+        warnUser(`Couldn't update user ${person.name}`)
       })
   }
 
@@ -61,7 +62,24 @@ const App = () => {
         setPersons(persons.concat(newPerson))
         setNewName('')
         setNewNumber('')
+        notifyUser(`Added ${newPerson.name}`)
       })
+  }
+
+  const notifyUser = (message) => {
+    setErrorMessage(message)
+    setStyle('info')
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+
+  const warnUser = (message) => {
+    setErrorMessage(message)
+    setStyle('error')
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
   }
 
   const deletePerson = (id) => {
@@ -74,6 +92,7 @@ const App = () => {
           console.log(`failed to delete person with id ${id} : {error}`)
         })
       setPersons(persons.filter(person => person.id !== id))
+      notifyUser(`User ${person.name} deleted`)
     }
   }
 
@@ -93,6 +112,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} style={style} />
       <Filter value={filter} handleChange={handleFilterChange} />
       <h3>add a new</h3>
       <PersonForm addPerson={addPerson} newName={newName} handleInputChange={handleInputChange}
