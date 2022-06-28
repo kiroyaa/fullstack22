@@ -17,12 +17,18 @@ const Count = (props) => {
 }
 
 const MostVotes = (props) => {
-  console.log("Points array: " + props.pointsArray)
   let mostPointsIndex = 0
+
+  for (var index in props.pointsArray) {
+    var point = props.pointsArray[index]
+    if (point > props.pointsArray[mostPointsIndex]) mostPointsIndex = index
+  }
 
   return (
     <div>
-      {props.anecdotes[mostPointsIndex]}
+      <h2>Most votes of the day</h2>
+      <p> {props.anecdotes[mostPointsIndex]}</p>
+      <p>has {props.pointsArray[mostPointsIndex]} points</p>
     </div>
   )
 }
@@ -62,7 +68,6 @@ function App() {
       <Count array={points} index={selected} />
       <Button handleClick={() => setVote(selected)} text="vote" />
       <Button handleClick={() => index(selected)} text="next anecdote" />
-      <h2>Most votes of the day</h2>
       <MostVotes anecdotes={anecdotes} pointsArray={points} />
     </div>
   )
