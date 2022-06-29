@@ -3,7 +3,7 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 mongoose.connect(url)
-  .then(result => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
@@ -15,7 +15,7 @@ mongoose.connect(url)
 // or xxx-xxxxx
 function validator(val) {
   const valid = /\d{3}-\d{5}/.test(val)
-  return valid ? valid : /\d{2}-\d{6}/.test(val);
+  return valid ? valid : /\d{2}-\d{6}/.test(val)
 }
 
 const custom = [validator, 'format is xx-xxxxxx or xxx-xxxxx']

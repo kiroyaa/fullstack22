@@ -18,7 +18,7 @@ app.use(cors())
 app.use(express.static('build'))
 app.use(requestLogger)
 
-morgan.token('body', function(req, res) {
+morgan.token('body', function(req) {
   return JSON.stringify(req.body)
 })
 
@@ -48,19 +48,11 @@ app.get('/api/persons/:id', (req, res, next) => {
 
 app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then(result => {
+    .then(() => {
       res.status(204).end()
     })
     .catch(error => next(error))
 })
-
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(p => p.id))
-    : 0
-  const randomId = Math.floor(Math.random() * 100000)
-  return randomId
-}
 
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
@@ -99,18 +91,24 @@ app.post('/api/persons', (req, res, next) => {
     .catch(error => next(error))
 })
 
-app.get('/info', (req, res) => {
-  const amount = persons.length
+app.get('/info', (_, res, next) => {
   const date = new Date()
-  res.send(`
-    <div>
-      <p>Phonebook has info for ${amount} people</p>
-      <p>${date}</p>
-    </div>
-    `)
+
+  Person.countDocuments({})
+    .then(amount => {
+      const info = '<html>' +
+        '<title>Info</title>' +
+        '<div>' +
+        `<p>Phonebook has info for ${amount} people</p>` +
+        `<p>${date}</p>` +
+        '</div>' +
+        '</html>'
+      res.send(info)
+    })
+    .catch(error => next(error))
 })
 
-const unknownEndpoint = (req, res) => {
+const unknownEndpoint = (_, res) => {
   res.status(404).send({ error: 'unknown endpoint' })
 }
 
