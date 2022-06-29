@@ -96,15 +96,17 @@ const App = () => {
     }
   }
 
-
+  // Triggered when number field is changed
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
 
+  // Triggered when name field is changed
   const handleInputChange = (event) => {
     setNewName(event.target.value)
   }
 
+  // Triggered when filter field is changed
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
   }
