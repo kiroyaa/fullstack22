@@ -64,6 +64,9 @@ const App = () => {
         setNewNumber('')
         notifyUser(`Added ${newPerson.name}`)
       })
+      .catch(error => {
+        warnUser(error.response.data.error)
+      })
   }
 
   const notifyUser = (message) => {
