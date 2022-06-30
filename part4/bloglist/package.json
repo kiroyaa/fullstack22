@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest --verbose",
+    "start": "NODE_ENV=production node index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand --forceExit",
     "lint": "eslint .",
-    "dev": "nodemon index.js"
+    "dev": "NODE_ENV=development nodemon index.js"
   },
   "author": "Joel Helkala",
   "license": "MIT",
@@ -15,13 +15,16 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "express-async-errors": "^3.1.1",
     "http": "^0.0.1-security",
     "mongoose": "^6.4.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint": "^8.18.0",
     "jest": "^28.1.2",
-    "nodemon": "^2.0.18"
+    "nodemon": "^2.0.18",
+    "supertest": "^6.2.3"
   },
   "jest": {
     "testEnvironment": "node"
