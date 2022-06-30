@@ -1,13 +1,10 @@
-const http = require('http')
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 
 const logger = require('./utils/logger')
-const Blog = require('./models/blog')
 const blogsRouter = require('./controllers/blogs')
-const mongoUrl = 'mongodb://localhost/bloglist'
 const config = require('./utils/config')
 
 logger.info('connecting to', config.MONGODB_URI)
