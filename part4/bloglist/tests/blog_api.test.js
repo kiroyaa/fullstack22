@@ -27,7 +27,6 @@ test('all blogs are returned', async () => {
 
 test('a specific blog is within the returned blogs', async () => {
   const blogs = await helper.blogsInDb()
-
   const contents = blogs.map(r => r.title)
 
   expect(contents).toContain(
