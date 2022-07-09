@@ -59,3 +59,56 @@ describe('when there is initially one user at db', () => {
   })
 
 })
+
+describe('invalid user tests', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('cannot create user with too short username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const invalidUser = {
+      username: 'te',
+      name: 'Test',
+      password: 'pass'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('username and password min length is 3')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('cannot create user with short password', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const invalidUser = {
+      username: 'test',
+      name: 'tester',
+      password: 'pa'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('username and password min length is 3')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+})
