@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -11,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [style, setStyle] = useState('')
 
@@ -39,20 +37,12 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blog = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
+  const addBlog = async (blogObject) => {
     const response = await blogService
-      .addBlog(blog, user.token)
+      .addBlog(blogObject, user.token)
 
     if (response.status === 200) {
       // success
-      clearForm()
       const blogs = await blogService.getAll()
       setBlogs(blogs)
       notifyUser(`a new blog ${response.data.title} by ${response.data.author} added`,
@@ -67,12 +57,6 @@ const App = () => {
     setTimeout(() => {
       setErrorMessage(null)
     }, 5000)
-  }
-
-  const clearForm = () => {
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
   }
 
   const handleLogin = async (event) => {
@@ -96,16 +80,6 @@ const App = () => {
       const error = exception.response.data.error
       notifyUser(error, 'error')
     }
-  }
-
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
-  }
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
   }
 
   if (user === null) {
@@ -143,9 +117,9 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={errorMessage} style={style} />
       <p>{user.name} logged in <button onClick={logout}>logout</button></p>
-      <BlogForm addBlog={addBlog} newTitle={newTitle} newAuthor={newAuthor} newUrl={newUrl}
-        handleTitleChange={handleTitleChange} handleAuthorChange={handleAuthorChange}
-        handleUrlChange={handleUrlChange} />
+      <Togglable buttonLabel='new blog'>
+        <BlogForm createBlog={addBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
