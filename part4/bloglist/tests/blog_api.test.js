@@ -237,7 +237,25 @@ describe('blog modifications', () => {
     expect(updatedBlog.author).toEqual('tester')
     expect(updatedBlog.likes).toBe(1337)
   })
+
+  test('unauthorized blog creation', async () => {
+    const newBlog = {
+      title: 'test',
+      author: 'tester',
+      url: 'test.com',
+      likes: 3
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+
+    const blogs = await helper.blogsInDb()
+    expect(blogs).toHaveLength(1)
+  })
 })
+
 
 
 afterAll(() => {
