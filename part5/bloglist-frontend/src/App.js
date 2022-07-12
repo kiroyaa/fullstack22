@@ -29,6 +29,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -61,7 +62,20 @@ const App = () => {
       const blogs = await blogService.getAll()
       setBlogs(blogs)
     } else {
-      console.log(response.error)
+      notifyUser(response, 'error')
+    }
+  }
+
+  const removeBlog = async (blogId) => {
+    const response = await blogService
+      .remove(blogId)
+
+    if (response.status === 200) {
+      const blogs = await blogService.getAll()
+      setBlogs(blogs)
+      notifyUser('Blog was succesfully deleted', 'info')
+    } else {
+      notifyUser(response, 'error')
     }
   }
 
@@ -76,7 +90,6 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-
     try {
       const user = await loginService.login({
         username,
@@ -89,6 +102,7 @@ const App = () => {
       )
 
       setUser(user)
+      blogService.setToken(user.token)
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -136,7 +150,11 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       {blogs.sort(function(a, b) { return b.likes - a.likes }).map(blog =>
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+        <Blog key={blog.id}
+          blog={blog}
+          likeBlog={likeBlog}
+          removeBlog={removeBlog}
+          userName={user.name} />
       )}
     </div>
   )
