@@ -20,9 +20,24 @@ const addBlog = async (blog, token) => {
   }
 }
 
+const updateBlog = async (blog, token) => {
+  try {
+    const response = await axios
+      .put(`${baseUrl}/${blog.id}`, blog, {
+        headers: {
+          'Authorization': `bearer ${token}`
+        }
+      })
+    return response
+  } catch (err) {
+    return err
+  }
+}
+
 const blogServ = {
   getAll,
   addBlog,
+  updateBlog,
 }
 
 export default blogServ
