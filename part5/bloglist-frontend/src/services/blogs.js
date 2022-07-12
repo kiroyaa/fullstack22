@@ -12,7 +12,7 @@ const getAll = async () => {
   return response.data
 }
 
-const addBlog = async (blog, token) => {
+const addBlog = async (blog) => {
   try {
     const response = await axios
       .post(baseUrl, blog, {
@@ -26,7 +26,7 @@ const addBlog = async (blog, token) => {
   }
 }
 
-const updateBlog = async (blog, token) => {
+const updateBlog = async (blog) => {
   try {
     const response = await axios
       .put(`${baseUrl}/${blog.id}`, blog, {

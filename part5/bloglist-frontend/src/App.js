@@ -40,7 +40,7 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     const response = await blogService
-      .addBlog(blogObject, user.token)
+      .addBlog(blogObject)
 
     if (response.status === 200) {
       // success
@@ -56,7 +56,7 @@ const App = () => {
     updatedBlog.likes += 1
 
     const response = await blogService
-      .updateBlog(updatedBlog, user.token)
+      .updateBlog(updatedBlog)
 
     if (response.status === 200) {
       const blogs = await blogService.getAll()
