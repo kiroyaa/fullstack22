@@ -10,11 +10,6 @@ const Blog = ({ blog, likeBlog, removeBlog, userName }) => {
     setVisible(!visible)
   }
 
-  const addLike = (event) => {
-    event.preventDefault()
-    likeBlog(blog)
-  }
-
   const handleRemove = (event) => {
     event.preventDefault()
 
@@ -24,14 +19,14 @@ const Blog = ({ blog, likeBlog, removeBlog, userName }) => {
   }
 
   return (
-    <div className="blog">
+    <li className="blog">
       <div className="blogTitle">
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>{buttonText}</button>
-        <div style={showWhenVisible}>
+        <div style={showWhenVisible} className='togglableContent'>
           <p>{blog.url}</p>
           <p>likes {blog.likes}
-            <button onClick={addLike}>like</button>
+            <button onClick={likeBlog}>like</button>
           </p>
           {blog.user &&
             <p>{blog.user.name}</p>
@@ -41,7 +36,7 @@ const Blog = ({ blog, likeBlog, removeBlog, userName }) => {
           }
         </div>
       </div>
-    </div>
+    </li>
   )
 }
 
