@@ -22,17 +22,17 @@ const Blog = ({ blog, likeBlog, removeBlog, userName }) => {
     <li className="blog">
       <div className="blogTitle">
         {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>{buttonText}</button>
+        <button className='viewButton' onClick={toggleVisibility}>{buttonText}</button>
         <div style={showWhenVisible} className='togglableContent'>
-          <p>{blog.url}</p>
-          <p>likes {blog.likes}
-            <button onClick={likeBlog}>like</button>
+          <p className='urlInfo'>{blog.url}</p>
+          <p className='likesInfo'>likes {blog.likes}
+            <button className='likeButton' onClick={likeBlog}>like</button>
           </p>
           {blog.user &&
             <p>{blog.user.name}</p>
           }
           {blog.user && blog.user.name === userName &&
-            <button onClick={handleRemove}>remove</button>
+            <button className='removeButton' onClick={handleRemove}>remove</button>
           }
         </div>
       </div>
