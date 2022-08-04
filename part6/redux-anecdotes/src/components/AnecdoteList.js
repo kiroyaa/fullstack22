@@ -18,8 +18,6 @@ const AnecdoteList = () => {
     }, 5000)
   }
 
-  console.log(filter)
-
   return (
     <div>
       {
