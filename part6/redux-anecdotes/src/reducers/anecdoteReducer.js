@@ -15,31 +15,19 @@ const anecdoteSlice = createSlice({
   name: 'anecdotes',
   initialState: [],
   reducers: {
-    newAnecdote(state, action) {
-      const content = action.payload
-      state.push(content)
-    },
-    increaseVotes(state, action) {
-      const id = action.payload
-      const anecdoteToChange = state.find(a => a.id === id)
-      const changedAnecdote = {
-        ...anecdoteToChange,
-        votes: anecdoteToChange.votes + 1
-      }
-
-      return state.map(anec =>
-        anec.id !== id ? anec : changedAnecdote
-      )
-    },
     appendAnecdote(state, action) {
       state.push(action.payload)
     },
     setAnecdotes(state, action) {
       return action.payload
+    },
+    updateAnecdote(state, action) {
+      return state.map(anec => anec.id !== action.payload.id ? anec : action.payload)
     }
   }
 })
 
+// redux-thunk async functions
 export const initializeAnecdotes = () => {
   return async dispatch => {
     const anecdotes = await anecdoteService.getAll()
@@ -47,12 +35,26 @@ export const initializeAnecdotes = () => {
   }
 }
 
-/* export const newAnecdote = content => {
+export const newAnecdote = content => {
   return async dispatch => {
     const response = await anecdoteService.createNew(content)
     dispatch(appendAnecdote(response))
   }
 }
-*/
-export const { increaseVotes, newAnecdote, appendAnecdote, setAnecdotes } = anecdoteSlice.actions
+
+export const increaseVotes = id => {
+  return async (dispatch, getState) => {
+    const state = getState()
+    const anecdoteToChange = state.anecdotes.find(anec => anec.id === id)
+    const changedAnecdote = {
+      ...anecdoteToChange,
+      votes: anecdoteToChange.votes + 1
+    }
+
+    const response = await anecdoteService.update(changedAnecdote)
+    dispatch(updateAnecdote(response.data))
+  }
+}
+
+export const { appendAnecdote, setAnecdotes, updateAnecdote } = anecdoteSlice.actions
 export default anecdoteSlice.reducer
