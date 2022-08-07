@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+let timeoutId = undefined
+
 const notificationSlice = createSlice({
   name: 'notification',
   initialState: '',
@@ -15,13 +17,13 @@ const notificationSlice = createSlice({
 })
 
 // redux thunk function
-// TODO: timer now has a fixed clear triggering and will not update
-// if new notification is set. Fix could be to use times and check if updated time has been
-// n milliseconds ago
 export const setNotification = (msg, timer) => {
   return async dispatch => {
     dispatch(addNotification(msg))
-    setTimeout(() => {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+    timeoutId = setTimeout(() => {
       dispatch(clearNotification())
     }, timer * 1000)
   }
