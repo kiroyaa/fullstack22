@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addVote, deleteBlog } from '../reducers/blogReducer'
 
 const Blog = ({ blog, userName }) => {
   const [visible, setVisible] = useState(false)
-
+  const user = useSelector(state => state.user)
   const dispatch = useDispatch()
   const showWhenVisible = { display: visible ? '' : 'none' }
   const buttonText = visible ? 'hide' : 'view'
@@ -20,7 +20,6 @@ const Blog = ({ blog, userName }) => {
       dispatch(deleteBlog(blog.id))
     }
   }
-
   return (
     <li className="blog">
       <div className="blogTitle">
@@ -32,9 +31,9 @@ const Blog = ({ blog, userName }) => {
             <button className='likeButton' onClick={() => dispatch(addVote(blog.id))}>like</button>
           </p>
           {blog.user &&
-            <p>{blog.user.name}</p>
+            <p>{blog.user.username}</p>
           }
-          {blog.user && blog.user.name === userName.username &&
+          {blog.user && blog.user.username === user.username &&
             <button className='removeButton' onClick={handleRemove}>remove</button>
           }
         </div>

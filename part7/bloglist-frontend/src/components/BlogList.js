@@ -1,9 +1,8 @@
 import { useSelector } from 'react-redux'
 import Blog from './Blog'
 
-const BlogList = (username) => {
+const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
-
 
   if (blogs.length === 0) {
     return (
@@ -19,7 +18,7 @@ const BlogList = (username) => {
         {blogs.map(blog =>
           <Blog key={blog.id}
             blog={blog}
-            userName={username} />
+          />
         )}
       </ul>
     </div>

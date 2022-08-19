@@ -1,24 +1,16 @@
 import { useState } from 'react'
-import loginService from '../services/login'
+import { useDispatch } from 'react-redux'
+import { login } from '../reducers/userReducer'
 
-const LoginForm = ({ updateUser }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-
-      window.localStorage.setItem(
-        'loggedUser',
-        JSON.stringify(user)
-      )
-
-      updateUser(user)
+      dispatch(login({ username: username, password: password }))
       setUsername('')
       setPassword('')
     } catch (exception) {

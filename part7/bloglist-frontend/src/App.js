@@ -1,50 +1,34 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
+import { logout, updateUser } from './reducers/userReducer'
+
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
-import { useDispatch } from 'react-redux'
-import blogService from './services/blogs'
-import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, newBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [user, setUser] = useState(null)
   const dispatch = useDispatch()
-
+  const user = useSelector(state => state.user)
+  console.log(user)
   useEffect(() => {
     dispatch(initializeBlogs())
     // get user from localStorage
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      const olduser = JSON.parse(loggedUserJSON)
+      dispatch(updateUser(olduser))
     }
   }, [dispatch])
-
-  const logout = () => {
-    window.localStorage.removeItem('loggedUser')
-    setUser(null)
-  }
-
-  const addBlog = async (blogObject) => {
-    dispatch(newBlog(blogObject))
-    dispatch(setNotification(`new blog created: ${blogObject.url}, by ${blogObject.author}`, 10))
-  }
-
-  const updateUser = (user) => {
-    setUser(user)
-    blogService.setToken(user.token)
-  }
 
   if (user === null) {
     return (
       <div>
         <h2>log in to application</h2>
         <Notification />
-        <LoginForm updateUser={updateUser} />
+        <LoginForm />
       </div>
     )
   }
@@ -53,9 +37,9 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification />
-      <p>{user.name} logged in <button id='mainLogout' onClick={logout}>logout</button></p>
+      <p>{user.name} logged in <button id='mainLogout' onClick={() => dispatch(logout())}>logout</button></p>
       <Togglable buttonLabel='new blog'>
-        <BlogForm createBlog={addBlog} />
+        <BlogForm />
       </Togglable>
       <BlogList username={user.name} />
     </div>

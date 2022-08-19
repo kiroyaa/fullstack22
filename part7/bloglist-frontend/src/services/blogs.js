@@ -20,9 +20,9 @@ const addBlog = async (blog) => {
           'Authorization': token
         }
       })
-    return response.data
+    return response
   } catch (err) {
-    return err.message
+    return err.response
   }
 }
 
