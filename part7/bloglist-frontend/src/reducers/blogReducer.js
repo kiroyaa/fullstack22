@@ -13,7 +13,7 @@ const blogSlice = createSlice({
       return action.payload
     },
     updateBlog(state, action) {
-      return state.map(blog => blog.id !== action.payload.id ? blog : { ...blog, likes: blog.likes + 1 })
+      return state.map(blog => blog.id !== action.payload.id ? blog : action.payload)
     },
     removeBlog(state, action) {
       return state.filter(blog => blog.id !== action.payload)
@@ -58,6 +58,19 @@ export const addVote = id => {
     dispatch(updateBlog(response.data))
   }
 }
+
+export const addComment = (id, comment) => {
+  return async dispatch => {
+    const response = await blogService.addComment(id, comment)
+    if (response.status === 200) {
+      dispatch(updateBlog(response.data))
+      dispatch(setNotification('added a comment', 10))
+    } else {
+      dispatch(setNotification('couldnt add a comment', 10))
+    }
+  }
+}
+
 // TODO: when blog is returned from creation the user is just id and not object
 export const { setBlogs, appendBlog, updateBlog, removeBlog } = blogSlice.actions
 export default blogSlice.reducer

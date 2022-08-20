@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addVote, deleteBlog } from '../reducers/blogReducer'
+import { addVote, deleteBlog, addComment } from '../reducers/blogReducer'
+import {
+  Button,
+  Heading,
+  Link,
+  Input,
+} from '@chakra-ui/react'
 
-const Blog = ({ blog, userName }) => {
-  const [visible, setVisible] = useState(false)
+const Blog = ({ blog }) => {
+  const [comment, setComment] = useState('')
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
-  const showWhenVisible = { display: visible ? '' : 'none' }
-  const buttonText = visible ? 'hide' : 'view'
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
 
   const handleRemove = (event) => {
     event.preventDefault()
@@ -20,25 +20,50 @@ const Blog = ({ blog, userName }) => {
       dispatch(deleteBlog(blog.id))
     }
   }
+
+  const handleComment = (event) => {
+    event.preventDefault()
+    dispatch(addComment(blog.id, comment))
+    setComment('')
+  }
+
+  if (!blog) {
+    return null
+  }
   return (
-    <li className="blog">
-      <div className="blogTitle">
-        {blog.title} {blog.author}
-        <button className='viewButton' onClick={toggleVisibility}>{buttonText}</button>
-        <div style={showWhenVisible} className='togglableContent'>
-          <p className='urlInfo'>{blog.url}</p>
-          <p className='likesInfo'>likes {blog.likes}
-            <button className='likeButton' onClick={() => dispatch(addVote(blog.id))}>like</button>
-          </p>
-          {blog.user &&
-            <p>{blog.user.username}</p>
-          }
-          {blog.user && blog.user.username === user.username &&
-            <button className='removeButton' onClick={handleRemove}>remove</button>
-          }
-        </div>
+    <div className='blogdiv'>
+      <Heading as='h3' size='md'>{blog.title} {blog.author}</Heading>
+      <div>
+        <Link href={blog.url} color='aqua' className='blogInfo'>{blog.url}</Link>
+        <p className='blogInfo'>likes {blog.likes}
+          <Button size='xs' colorScheme='teal'
+            onClick={() => dispatch(addVote(blog.id))}>like</Button>
+        </p>
+        {blog.user &&
+          <p className='blogInfo'>added by {blog.user.username}</p>
+        }
+
       </div>
-    </li>
+      {blog.user && blog.user.username === user.username &&
+        <Button className='removeButton' onClick={handleRemove}>remove</Button>
+      }
+      <Heading as='h3' size='sm'>comments</Heading>
+      <Input
+        type="text"
+        id="commentInput"
+        value={comment}
+        placeholder='leave a comment'
+        size='sm'
+        width='50'
+        onChange={({ target }) => setComment(target.value)} />
+      <Button size='xs' colorScheme='teal' variant='outline' onClick={handleComment}>add comment</Button>
+      <ul>
+        {blog.comments.map(comment =>
+          <li key={comment}>{comment}</li>
+        )
+        }
+      </ul>
+    </div>
   )
 }
 

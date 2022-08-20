@@ -54,12 +54,28 @@ const remove = async (blogId) => {
   }
 }
 
+const addComment = async (id, comment) => {
+  try {
+    const response = await axios
+      .post(`${baseUrl}/${id}/comments`,
+        { comment: comment }, {
+        headers: {
+          'Authorization': token
+        }
+      })
+    return response
+  } catch (e) {
+    return e.response
+  }
+}
+
 const blogServ = {
   setToken,
   getAll,
   addBlog,
   updateBlog,
   remove,
+  addComment,
 }
 
 export default blogServ

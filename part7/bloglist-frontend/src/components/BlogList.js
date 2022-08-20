@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux'
-import Blog from './Blog'
+import { Link as ReactLink } from 'react-router-dom'
+import { Link, ListItem, UnorderedList } from '@chakra-ui/react'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
@@ -14,13 +15,13 @@ const BlogList = () => {
 
   return (
     <div>
-      <ul className='bloglist'>
+      <UnorderedList className='bloglist'>
         {blogs.map(blog =>
-          <Blog key={blog.id}
-            blog={blog}
-          />
+          <ListItem key={blog.id} className='blogTitle'>
+            <Link as={ReactLink} to={`/blogs/${blog.id}`} color='teal'>{blog.title} {blog.author}</Link>
+          </ListItem>
         )}
-      </ul>
+      </UnorderedList>
     </div>
   )
 }
