@@ -1,7 +1,6 @@
 const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
@@ -23,7 +22,8 @@ blogsRouter.post('/', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
+    user: user._id,
+    comments: []
   })
 
   let error = blog.validateSync()
@@ -66,6 +66,25 @@ blogsRouter.put('/:id', async (request, response) => {
   await Blog.findByIdAndUpdate(request.params.id, blog)
   const updatedBlog = await Blog.findById(request.params.id)
   response.json(updatedBlog)
+})
+
+
+// @brief   add a comment to a blog
+// @note    are anonymous so no need for user info
+// @return  status code for action
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const body = request.body
+  try {
+    const blog = await Blog.findById(request.params.id)
+    blog.comments = blog.comments.concat(body.comment)
+    await blog.save()
+    response.json(blog)
+  } catch (e) {
+    response.status(400).json({
+      error: 'something went wrong'
+    })
+  }
+
 })
 
 module.exports = blogsRouter
