@@ -6,9 +6,6 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 
-
-
-
 const App = () => {
   const authors = useQuery(ALL_AUTHORS, {
     pollInterval: 2000
